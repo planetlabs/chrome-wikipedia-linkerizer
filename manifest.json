@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "Wikipedia Planet Labs Scenerizer",
+  "description": "Adds a link to a Planet Labs Scenes Browser search for every (lat, long) location on Wikipedia pages",
+  "version": "0.1",
+
+  "page_action": {
+    "default_icon": "ortho.png"
+  },
+
+  "background": {
+    "scripts": ["bg.js"],
+    "presistent": false
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://*.wikipedia.org/*",
+                  "http://*.wikipedia.org/*"],
+      "js": ["locscrape.js"]
+    }
+  ]
+}
+
