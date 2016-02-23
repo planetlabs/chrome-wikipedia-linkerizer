@@ -17,7 +17,7 @@
     {
       "matches": ["https://*.wikipedia.org/*",
                   "http://*.wikipedia.org/*"],
-      "js": ["locscrape.js"]
+      "js": ["auth.js", "locscrape.js"]
     }
   ]
 }
