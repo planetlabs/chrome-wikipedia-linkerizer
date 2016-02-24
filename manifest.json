@@ -4,9 +4,7 @@
   "description": "Adds a link to a Planet Labs Scenes Browser search for every (lat, long) location on Wikipedia pages",
   "version": "0.1",
 
-  "page_action": {
-    "default_icon": "ortho.png"
-  },
+  "page_action": {},
 
   "background": {
     "scripts": ["bg.js"],
