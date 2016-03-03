@@ -1,0 +1,1 @@
+This lambda depends on the requests library. Make sure to ```pip install requests -t `pwd` ``` here before uploading to AWS Lambda!

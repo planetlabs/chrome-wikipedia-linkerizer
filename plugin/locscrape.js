@@ -1,7 +1,7 @@
 var latlonUrl = /https:\/\/tools.wmflabs.org\/\S*params=([\d_NSEW\.-]+)/;
 var locSplit = /([\d\._-]+)_([NS])_([\d\._-]+)_([EW])/;
 var scenesUrl = "https://www.planet.com/scenes/#/zoom/12/acquired/0/geometry/";
-var apiUrl = "https://api.planet.com/v0/scenes/ortho/?intersects=";
+var apiUrl = "https://0rhmc5dpec.execute-api.us-east-1.amazonaws.com/doingitlive/?";
 
 function parseLoc(str) {
   // str eg 16_44_13_N_169_31_26_W
@@ -61,6 +61,7 @@ function sceneify(ln, i) {
   var matches = latlonUrl.exec(ln[i]);
   if (matches === null) {
     sceneify(ln, i + 1);
+    return;
   }
   var loc = parseLoc(matches[1]);
 
@@ -73,9 +74,7 @@ function sceneify(ln, i) {
       sceneify(ln, i + 1);
     }
   };
-  req.open("GET", apiUrl + "POINT(" + loc[1] + "%20" + loc[0] + ")", true);
-           //true, authkey, authkey);
-  req.setRequestHeader("Authorization", "Basic " + btoa(authkey + ":" + authkey));
+  req.open("GET", apiUrl + "lat=" + loc[0] + "&lon=" + loc[1], true);
   req.send(null);
 }
 

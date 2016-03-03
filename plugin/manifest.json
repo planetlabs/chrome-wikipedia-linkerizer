@@ -10,12 +10,15 @@
     "scripts": ["bg.js"],
     "presistent": false
   },
+  "permissions": [
+    "https://0rhmc5dpec.execute-api.us-east-1.amazonaws.com/"
+  ],
 
   "content_scripts": [
     {
       "matches": ["https://*.wikipedia.org/*",
                   "http://*.wikipedia.org/*"],
-      "js": ["auth.js", "locscrape.js"]
+      "js": ["locscrape.js"]
     }
   ]
 }
