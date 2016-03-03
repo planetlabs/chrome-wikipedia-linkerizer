@@ -8,4 +8,3 @@ def lambda_handler(event, context):
     req = requests.get(apiUrl.format(event['lon'], event['lat']),
                        auth=(planetKey, ''))
     return {"count": json.loads(req.content)['count']}
-    return '{"count": ' + str(json.loads(req.content)['count']) + '}'
