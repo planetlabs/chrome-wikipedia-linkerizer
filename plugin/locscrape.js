@@ -39,6 +39,7 @@ function scenesLink(lat, lon, elt, scenecount) {
   var ln = document.createElement('a');
   ln.setAttribute('href', scenesUrl + "POINT(" + lon + "%20" + lat + ")"
                           + "/center/" + lon + "," + lat);
+  ln.setAttribute('target', "_blank")
   ln.appendChild(document.createTextNode("(" + scenecount + " scenes)"));
   var par = elt.parentElement;
   if (elt.nextSibling === null) {
