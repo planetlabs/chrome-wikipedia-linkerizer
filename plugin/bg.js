@@ -11,8 +11,17 @@ chrome.runtime.onMessage.addListener(
         chrome.pageAction.show(sender.tab.id);
         chrome.pageAction.setTitle({tabId: sender.tab.id,
                                     title: ("urls: " + request.urls +
-                                            " locs: " + request.locs + 
+                                            " locs: " + request.locs +
                                             " scenes: " + request.scenes)});
-      }
+      } else if (request.action == "debugIcon") {
+        chrome.pageAction.setIcon({tabId: sender.tab.id, path: "complete.png"});
+        chrome.pageAction.show(sender.tab.id);
+        chrome.pageAction.setTitle({tabId: sender.tab.id,
+                                    title: ("urls: " + request.urls +
+                                            " locs: " + request.locs +
+                                            " scenes: " + request.scenes +
+                                            " api: " + request.apitime +
+                                            " js: " + request.jstime)});
+	  }
     });
 

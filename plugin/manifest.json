@@ -1,17 +1,19 @@
 {
   "manifest_version": 2,
-  "name": "Wikipedia Planet Labs Scenerizer",
-  "description": "Adds a link to a Planet Labs Scenes Browser search for every (lat, long) location on Wikipedia pages",
-  "version": "0.1",
+  "name": "Planet Labs Scenerizer",
+  "description": "Adds a link to a Planet Labs Scenes Browser search and an image count for every (lat, long) location on Wikipedia pages",
+  "version": "0.2.1",
 
-  "page_action": {},
+  "page_action": {
+    "default_icon": "start.png"
+  },
 
   "background": {
     "scripts": ["bg.js"],
     "presistent": false
   },
   "permissions": [
-    "https://0rhmc5dpec.execute-api.us-east-1.amazonaws.com/"
+	"https://9ega98lmsd.execute-api.us-west-2.amazonaws.com/"
   ],
 
   "content_scripts": [
