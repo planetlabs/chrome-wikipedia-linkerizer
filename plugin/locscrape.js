@@ -1,7 +1,5 @@
 var latlonUrl = /https:\/\/tools.wmflabs.org\/\S*params=([\d_NSEW\.-]+)/;
 var locSplit = /([\d\._-]+)_([NS])_([\d\._-]+)_([EW])/;
-var scenesUrl = "https://www.planet.com/scenes/#/zoom/12/acquired/0/geometry/";
-var apiUrl = "https://9ega98lmsd.execute-api.us-west-2.amazonaws.com/prod?"
 
 var debug = false;
 
@@ -42,35 +40,6 @@ function parseAngle(str) {
   return retval;
 }
 
-function scenesLink(lat, lon, elt, sceneObj) {
-  // Adds a link to the Planet scenes web app after 'elt'.
-  var ln = document.createElement('a');
-  ln.setAttribute('href', scenesUrl + "POINT(" + lon + "%20" + lat + ")"
-                          + "/center/" + lon + "," + lat);
-  if (debug) {
-    totalTime = debug.sceneEnd.getTime() - debug.sceneStart.getTime();
-    debug.jsTime += totalTime;
-    debug.apiTime += sceneObj.runtime;
-    ln.setAttribute('title', totalTime + " (" + sceneObj.runtime + ") ms");
-  }
-  if (sceneObj.count !== undefined) {
-    ln.appendChild(document.createTextNode("(" + sceneObj.count + " scenes)"));
-  } else {
-    // sometimes we get an error response
-    ln.appendChild(document.createTextNode("(scenes link)"));
-    // I'm ok with clobbering the timing info if in debug mode
-    ln.setAttribute('title', "API error getting scene count");
-  }
-
-  var par = elt.parentElement;
-  if (elt.nextSibling === null) {
-    par.appendChild(ln);
-  } else {
-    par.insertBefore(ln, elt.nextSibling);
-  }
-  par.insertBefore(document.createTextNode("  "), ln);
-}
-
 function sceneify(ln, i) {
   if (i >= ln.length) {
     // have tried all links, set the new icon
@@ -94,24 +63,31 @@ function sceneify(ln, i) {
   }
   var loc = parseLoc(matches[1]);
 
-  var req = new XMLHttpRequest();
-  req.onreadystatechange = function() {
-    if (req.readyState == 4 && req.status == 200) {
-      if (debug) {
-        debug.sceneEnd = new Date();
-      }
-      var sceneDat = JSON.parse(req.responseText);
-      scenesLink(loc[0], loc[1], ln[i], sceneDat);
-      sceneCount += sceneDat.count;
-      // will recurse and run the next link after getting the HTTP response
-      sceneify(ln, i + 1);
-    }
-  };
   if (debug) {
     debug.sceneStart = new Date();
   }
-  req.open("GET", apiUrl + "lat=" + loc[0] + "&lon=" + loc[1], true);
-  req.send(null);
+  mkScenesLink(loc[0], loc[1], function (lnk, sceneDat) {
+    if (debug) {
+      debug.sceneEnd = new Date();
+      var totalTime = new Date().getTime() - debug.sceneStart.getTime();
+      debug.jsTime += totalTime;
+      debug.apiTime += sceneDat.runtime;
+      lnk.setAttribute('title', totalTime + " (" + sceneDat.runtime + ") ms");
+    }
+
+    var elt = ln[i];
+    var par = elt.parentElement;
+    if (elt.nextSibling === null) {
+      par.appendChild(lnk);
+    } else {
+      par.insertBefore(lnk, elt.nextSibling);
+    }
+    par.insertBefore(document.createTextNode("  "), lnk);
+
+    sceneCount += sceneDat.count;
+    // will recurse and run the next link after getting the HTTP response
+    sceneify(ln, i + 1);
+  });
 }
 
 // "Real" execution begins here.
@@ -123,8 +99,7 @@ if (debug) {
   debug.apiTime = 0;
   debug.jsTime = 0;
 
-  debug.sceneStart;
-  debug.sceneEnd;
+  debug.sceneStart = null;
 }
 
 var locCount = 0;

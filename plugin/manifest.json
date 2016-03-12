@@ -20,7 +20,11 @@
     {
       "matches": ["https://*.wikipedia.org/*",
                   "http://*.wikipedia.org/*"],
-      "js": ["locscrape.js"]
+      "js": ["scenerize.js", "locscrape.js"]
+    },
+    {
+      "matches": ["https://www.google.com/*"],
+      "js": ["scenerize.js", "googscrape.js"]
     }
   ]
 }
