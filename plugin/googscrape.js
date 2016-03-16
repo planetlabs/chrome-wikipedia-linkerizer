@@ -1,9 +1,10 @@
 var latlon = /\/maps\/.*@([-0-9.]+),([-0-9.]+),[0-9]+z/
 
-var watcher = new MutationObserver(docChanged);
+var watcher = null;
 var changeTimer = null;
 
 function docChanged(records, observer) {
+  chrome.runtime.sendMessage({action: "earlyIcon"}, function (response) {});
   if (changeTimer !== null) {
     clearTimeout(changeTimer);
   }
@@ -13,6 +14,7 @@ function docChanged(records, observer) {
 function mkLink(observer) {
   var mapImg = document.getElementById("lu_map");
   if (document.getElementById("_scenerizer_link") !== null || mapImg === null) {
+    chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
     return;
   }
   observer.disconnect();
@@ -23,6 +25,7 @@ function mkLink(observer) {
       var mapImg = document.getElementById("lu_map");
       if (document.getElementById("_scenerizer_link") !== null
           || mapImg === null) {
+        chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
         return;
       }
       // There is a race condition where we've kicked off mkScenesLink() and the
@@ -32,6 +35,7 @@ function mkLink(observer) {
       //  map is for the same location as the callback is for.
       var newPos = latlon.exec(mapImg.parentElement.href);
       if (newPos[1] != pos[1] || newPos[2] != pos[2]) {
+        chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
         return;
       }
 
@@ -43,6 +47,7 @@ function mkLink(observer) {
       if (elt === null) {
         // couldn't back out to the infobox. I actually haven't seen this
         //  happen, but I'm not 100% sure that it never will.
+        chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
         return;
       }
       var modElts = elt.getElementsByClassName("mod");
@@ -52,10 +57,19 @@ function mkLink(observer) {
       scenediv.id = "_scenerizer_link";
       scenediv.appendChild(lnk);
       modElts[3].parentElement.insertBefore(scenediv, modElts[3]);
+      chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
     });
+  } else {
+    chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
   }
   observer.observe(document, {"childList": true, "attributes": true,
                               "characterData": true, "subtree": true});
 }
 
-mkLink(watcher);
+restore_options(function(options) {
+  if (options["google-search"]["state"] === true) {
+    chrome.runtime.sendMessage({action: "earlyIcon"}, function (response) {});
+    watcher = new MutationObserver(docChanged);
+    mkLink(watcher);
+  }
+});

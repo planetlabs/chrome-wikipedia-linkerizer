@@ -1,80 +1,67 @@
 var debug = false;
 
+var options = {"wikipedia-coords": {"default": true,
+                                    "info": "Wikipedia coordinates"},
+               "google-search": {"default": false,
+                                 "info": "Google searches (BETA)"}};
+
 function logit(str) {
   if (debug == false) {
     return;
   }
   var l = document.getElementById("debug-data");
+  if (l === null) {
+    return;
+  }
   l.appendChild(document.createElement("br"));
   l.appendChild(document.createTextNode(str));
 }
 
-function get_options() {
-  var opts = document.getElementsByClassName("optcheck");
-  var optsState = {};
-  for (i = 0; i < opts.length; i++) {
-    optsState[opts[i].id] = opts[i].checked;
-  }
-  return optsState;
-}
-
 function save_options() {
-  var optsState = get_options();
-  chrome.storage.sync.set(optsState,
+  for (var id in options) {
+    var cb = document.getElementById(id);
+    if (cb !== null) {
+      options[id]["state"] = cb.checked;
+    }
+  }
+  chrome.storage.sync.set(options,
                           function() {
                             logit("Saved:");
-                            for (var o in optsState) {
-                              logit(o + ": " + optsState[o]);
+                            for (var o in options) {
+                              logit(o + ": " + options[o]["state"]);
                             }
                             logit("--");
                           });
 }
 
-function restore_options() {
-  var optsState = get_options();
-  logit(Object.keys(optsState));
-  chrome.storage.sync.get(Object.keys(optsState), function (opts) {
+function restore_options(callback = null) {
+  logit(Object.keys(options));
+  chrome.storage.sync.get(Object.keys(options), function (opts) {
     logit("Loading...");
-    for (var id in optsState) {
-      if (opts[id] !== undefined) {
-        document.getElementById(id).checked = opts[id];
-        logit(id + ": " + opts[id]);
+    for (var id in opts) {
+      if (options[id] !== undefined) {
+        options[id]["state"] = opts[id]["state"];
+        logit(id + ": " + options[id]["state"]);
       } else {
-        logit("no luck: " + optName);
+        logit("no luck: " + id);
       }
     }
     logit("done.");
+    if (callback !== null) {
+      callback(options);
+    }
   });
 }
 
 function set_defaults() {
-  var opts = document.getElementsByClassName("optcheck");
   var defaultCount = 0;
-  for (var i in opts) {
-    var opt = document.getElementById(i);
+  for (var k in options) {
+    var opt = document.getElementById(k);
     if (opt === null) {
       continue;
     }
-    for (j = 0; j < opt.classList.length; j++) {
-      if (opt.classList[j] == "def-off") {
-        opt.checked = false;
-        defaultCount++;
-      } else if (opt.classList[j] == "def-on") {
-        opt.checked = true;
-        defaultCount++;
-      }
-    }
+    opt.checked = options[k]["default"];
+    defaultCount++;
   }
   logit(defaultCount + " defaults loaded.")
-}
-
-document.addEventListener('DOMContentLoaded',
-                          function () {
-                            set_defaults();
-                            restore_options();
-                          });
-var opts = get_options();
-for (var opt in opts) {
-  document.getElementById(opt).onclick = save_options;
-  logit("watching " + opt);
 }

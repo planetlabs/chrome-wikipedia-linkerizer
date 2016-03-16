@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Planet Labs Scenerizer",
   "description": "Adds a link to a Planet Labs Scenes Browser search and an image count for every (lat, long) location on Wikipedia pages",
-  "version": "0.2.1",
+  "version": "0.2.2",
 
   "options_ui": {
     "page": "options.html",
@@ -26,11 +26,11 @@
     {
       "matches": ["https://*.wikipedia.org/*",
                   "http://*.wikipedia.org/*"],
-      "js": ["scenerize.js", "locscrape.js"]
+      "js": ["scenerize.js", "options.js", "locscrape.js"]
     },
     {
       "matches": ["https://www.google.com/*"],
-      "js": ["scenerize.js", "googscrape.js"]
+      "js": ["scenerize.js", "options.js", "googscrape.js"]
     }
   ]
 }

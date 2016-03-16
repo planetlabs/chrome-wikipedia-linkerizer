@@ -1,6 +1,10 @@
 var latlonUrl = /https:\/\/tools.wmflabs.org\/\S*params=([\d_NSEW\.-]+)/;
 var locSplit = /([\d\._-]+)_([NS])_([\d\._-]+)_([EW])/;
 
+var links = [];
+var sceneCount = 0;
+var locCount = 0;
+
 var debug = false;
 
 function parseLoc(str) {
@@ -49,7 +53,7 @@ function sceneify(ln, i) {
       done.apitime = debug.apiTime / locCount;
       done.jstime = debug.jsTime / locCount;
     } else {
-      done.action = "lateIcon";
+      done.action = "lateIconWithInfo";
     }
     chrome.runtime.sendMessage(done, function(response) {});
     return;
@@ -91,26 +95,27 @@ function sceneify(ln, i) {
 }
 
 // "Real" execution begins here.
+restore_options(function(options) {
+  if (options["wikipedia-coords"]["state"] === true) {
+    links = document.getElementsByTagName("a");
 
-var links = document.getElementsByTagName("a");
-var sceneCount = 0;
+    if (debug) {
+      debug.apiTime = 0;
+      debug.jsTime = 0;
 
-if (debug) {
-  debug.apiTime = 0;
-  debug.jsTime = 0;
+      debug.sceneStart = null;
+    }
 
-  debug.sceneStart = null;
-}
+    for (i = 0; i < links.length; i++) {
+      if (latlonUrl.exec(links[i]) !== null) {
+        locCount++;
+      }
+    }
 
-var locCount = 0;
-for (i = 0; i < links.length; i++) {
-  if (latlonUrl.exec(links[i]) !== null) {
-    locCount++;
+    chrome.runtime.sendMessage({action: "earlyIconWithInfo",
+                                urls: links.length,
+                                locs: locCount}, function(response) {});
+
+    sceneify(links, 0);
   }
-}
-
-chrome.runtime.sendMessage({action: "earlyIcon",
-                            urls: links.length,
-                            locs: locCount}, function(response) {});
-
-sceneify(links, 0);
+});
