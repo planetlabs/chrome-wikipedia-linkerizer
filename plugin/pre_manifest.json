@@ -29,7 +29,9 @@
       "js": ["scenerize.js", "options.js", "locscrape.js"]
     },
     {
-      "matches": ["https://www.google.com/*"],
+      "matches": [
+        __GOOGLES
+      ],
       "js": ["scenerize.js", "options.js", "googscrape.js"]
     }
   ]

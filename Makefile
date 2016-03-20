@@ -4,12 +4,19 @@ PLUGIN_FILES=plugin/manifest.json\
 			 plugin/locscrape.js\
 			 plugin/googscrape.js\
 			 plugin/start.png\
-			 plugin/complete.png
+			 plugin/complete.png\
+			 plugin/options.js\
+			 plugin/options.html\
+			 plugin/optionspage.js
 
-all: plugin.zip
+all: scenerizer.zip
 
 clean:
-	rm plugin.zip
+	rm -f scenerizer.zip googles.tmp plugin/manifest.json
 
-plugin.zip: $(PLUGIN_FILES)
-	zip plugin.zip $(PLUGIN_FILES)
+scenerizer.zip: $(PLUGIN_FILES)
+	zip scenerizer.zip $(PLUGIN_FILES)
+
+plugin/manifest.json:
+	curl http://www.google.com/supported_domains | sed -e 's/.*/        "https:\/\/www&\/\*",/' -e '$$ s/,//' > googles.tmp
+	sed -e '/__GOOGLES/ r googles.tmp' -e '/__GOOGLES/ d' <plugin/pre_manifest.json > plugin/manifest.json
