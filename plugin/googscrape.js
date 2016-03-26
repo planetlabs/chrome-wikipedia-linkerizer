@@ -17,7 +17,6 @@ function mkLink(observer) {
     chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
     return;
   }
-  observer.disconnect();
   // find the link with a coord
   var pos = latlon.exec(mapImg.parentElement.href);
   if (pos !== null) {
@@ -62,14 +61,14 @@ function mkLink(observer) {
   } else {
     chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
   }
-  observer.observe(document, {"childList": true, "attributes": true,
-                              "characterData": true, "subtree": true});
 }
 
 restore_options(function(options) {
   if (options["google-search"]["state"] === true) {
     chrome.runtime.sendMessage({action: "earlyIcon"}, function (response) {});
     watcher = new MutationObserver(docChanged);
+    watcher.observe(document, {"childList": true, "attributes": true,
+                               "characterData": true, "subtree": true});
     mkLink(watcher);
   }
 });
