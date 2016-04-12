@@ -34,7 +34,7 @@ function save_options() {
                           });
 }
 
-function restore_options(callback = null) {
+function restore_options(callback) {
   logit(Object.keys(options));
   chrome.storage.sync.get(Object.keys(options), function (opts) {
     logit("Loading...");
@@ -47,7 +47,7 @@ function restore_options(callback = null) {
       }
     }
     logit("done.");
-    if (callback !== null) {
+    if (callback !== undefined) {
       callback(options);
     }
   });

@@ -33,7 +33,7 @@ function mkLink(observer) {
       //  an incorrect scenes link. So we check to make sure the current infobox
       //  map is for the same location as the callback is for.
       var newPos = latlon.exec(mapImg.parentElement.href);
-      if (newPos[1] != pos[1] || newPos[2] != pos[2]) {
+      if (newPos !== null && (newPos[1] != pos[1] || newPos[2] != pos[2])) {
         chrome.runtime.sendMessage({action: "lateIcon"}, function (response) {});
         return;
       }

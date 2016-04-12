@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Planet Scene Linker",
   "description": "Adds a link to a Planet Labs Scenes Browser search and an image count for every (lat, long) location on Wikipedia pages",
-  "version": "0.2.3",
+  "version": "0.2.4",
 
   "options_ui": {
     "page": "options.html",
